@@ -10,7 +10,7 @@ st.markdown("""
     .subtitle { color: #3B82F6; font-size: 18px; text-align: center; margin-bottom: 25px; }
     .section-header { color: #1E3A8A; border-bottom: 2px solid #3B82F6; padding-bottom: 5px; margin-top: 20px; margin-bottom: 15px; }
     </style>
-""", unsafe_input_html=True)
+""", unsafe_allow_html=True)
 
 # Titre principal mis à jour
 st.markdown('<div class="main-title">✨ Mon Générateur de CV</div>', unsafe_allow_html=True)
