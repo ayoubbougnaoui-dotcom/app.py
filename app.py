@@ -12,27 +12,32 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Titre principal mis à jour
 st.markdown('<div class="main-title">✨ Mon Générateur de CV</div>', unsafe_allow_html=True)
 st.markdown("<div class='subtitle'>Remplis tes informations et télécharge ton CV complet en un clic !</div>", unsafe_allow_html=True)
 
 st.write("### 📝 Remplis les différentes sections de ton CV :")
 
-# --- SECTION 1 : INFORMATIONS PERSONNELLES ---
+# --- SECTION 1 : INFORMATIONS PERSONNELLES (Mise à jour avec Bondy 93140) ---
 with st.expander("👤 1. Informations Personnelles & Contact", expanded=True):
     nom = st.text_input("Nom complet (Prénom & Nom)", value="Kylian Mbappé")
     titre_pro = st.text_input("Titre du CV / Métier recherché", value="Footballeur Professionnel / Attaquant International")
     email = st.text_input("Adresse e-mail", value="kylian.mbappe@example.com")
     telephone = st.text_input("Numéro de téléphone", value="06 07 10 29 09")
-    ville = st.text_input("Ville & Code Postal", value="Madrid, Espagne (Originaire de Bondy)")
+    ville = st.text_input("Ville & Code Postal", value="Bondy 93140")
     linkedin = st.text_input("Lien LinkedIn ou Site Web", value="instagram.com/k.mbappe")
 
-# --- SECTION 2 : ACCROCHE ---
-with st.expander("📝 2. À propos de moi (Accroche)", expanded=False):
-    accroche = st.text_area(
-        "Présente ton profil en quelques phrases percutantes :",
-        value="Attaquant d'élite déterminé, rapide et doté d'un grand sens du collectif. Passionné par l'excellence et la victoire, je mets ma technique, mon leadership et mon esprit de compétition au service des plus grands objectifs sportifs."
+# --- SECTION 2 : ACCROCHE GÉNÉRÉE AUTOMATIQUEMENT ---
+with st.expander("📝 2. À propos de moi (Génération Profil)", expanded=False):
+    mots_cles = st.text_input(
+        "Entre quelques mots-clés pour ton profil (séparés par des virgules) :",
+        value="Rapide, Déterminé, Sens du collectif, Leadership"
     )
+    
+    # Création de la phrase automatique à partir des mots-clés
+    if mots_cles:
+        accroche = f"Professionnel {titre_pro.lower()} caractérisé par mon profil : {mots_cles.strip()}. Passionné par l'excellence et le travail bien fait, je mets mes compétences et mon esprit d'équipe au service d'objectifs ambitieux."
+    else:
+        accroche = "Profil professionnel motivé et rigoureux."
 
 # --- SECTION 3 : EXPÉRIENCES ---
 with st.expander("🏢 3. Expériences Professionnelles (Jusqu'à 3)", expanded=False):
@@ -56,7 +61,7 @@ with st.expander("🏢 3. Expériences Professionnelles (Jusqu'à 3)", expanded=
     exp3_dates = st.text_input("Période (Dates) 3", value="2015 - 2017")
     exp3_missions = st.text_area("Missions 3 (une par ligne)", value="- Formation d'excellence au centre de formation\n- Demi-finaliste de la Ligue des Champions à 18 ans\n- Champion de France de Ligue 1 (2017)")
 
-# --- SECTION 4 : FORMATIONS (CORRIGÉE : MULTIPLES DIPLÔMES) ---
+# --- SECTION 4 : FORMATIONS (MULTIPLES DIPLÔMES) ---
 with st.expander("🎓 4. Formations & Diplômes (Jusqu'à 3)", expanded=False):
     st.markdown("#### 🎓 Formation 1 (La plus récente)")
     diplome1 = st.text_input("Nom du diplôme 1", value="Baccalauréat STMG")
@@ -66,7 +71,7 @@ with st.expander("🎓 4. Formations & Diplômes (Jusqu'à 3)", expanded=False):
     st.markdown("---")
     st.markdown("#### 🎓 Formation 2")
     diplome2 = st.text_input("Nom du diplôme 2 (Optionnel)", value="Formation Management Sportif & Leadership")
-    ecole2 = st.text_input("Établissement / École 2", value=" thereal-academy en ligne")
+    ecole2 = st.text_input("Établissement / École 2", value="The Real Academy en ligne")
     dates2 = st.text_input("Année d'obtention 2", value="2020")
 
     st.markdown("---")
@@ -155,7 +160,7 @@ Généré automatiquement via l'application CV Python de {nom}
         if diplome3:
             formations_html += f"<p style='margin-top:10px;'><strong>{diplome3}</strong> – {ecole3} <span style='color:#666;'>({dates3})</span></p>"
 
-        # 2. Rendu HTML sécurisé via iframe composant Streamlit
+        # 2. Rendu HTML sécurisé
         st.write("### 👁️ Aperçu de ton nouveau CV :")
         
         cv_html = f"""
@@ -195,11 +200,10 @@ Généré automatiquement via l'application CV Python de {nom}
             <p style="font-size: 13px; margin: 5px 0;">{interets}</p>
         </div>
         """
-        # Utilisation de components.html pour forcer le bon affichage du design graphique
         components.html(cv_html, height=650, scrolling=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Bouton pour télécharger le fichier texte propre
+        # Bouton de téléchargement
         st.download_button(
             label="💾 Télécharger mon CV au format (.txt)",
             data=cv_txt,
