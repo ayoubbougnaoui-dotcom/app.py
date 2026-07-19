@@ -1,5 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import base64
 
 # 1. Configuration de la page du site
 st.set_page_config(page_title="Mon Générateur de CV", page_icon="📄", layout="centered")
@@ -92,7 +93,7 @@ if st.button("✨ Générer et Prévisualiser mon CV"):
     if not nom or not titre_pro or not email:
         st.error("❌ Les champs 'Nom complet', 'Titre du CV' et 'Adresse e-mail' sont obligatoires.")
     else:
-        st.success("🎉 Ton CV a été généré avec succès ! Découvre l'aperçu mis en forme ci-dessous.")
+        st.success("🎉 Ton CV a été généré avec succès ! Découvre l'aperçu et télécharge tes fichiers ci-dessous.")
 
         # Construction de la section Formations en texte (.txt)
         formations_txt = f"• {dates1} | {diplome1}\n  🏢 {ecole1}"
@@ -101,7 +102,7 @@ if st.button("✨ Générer et Prévisualiser mon CV"):
         if diplome3:
             formations_txt += f"\n\n• {dates3} | {diplome3}\n  🏢 {ecole3}"
 
-        # 1. Version Texte
+        # 1. Version Texte brute
         cv_txt = f"""========================================================================
 {nom.upper()}
 {titre_pro.upper()}
@@ -159,59 +160,93 @@ Généré automatiquement via l'application CV Python de {nom}
         if diplome3:
             formations_html += f"<p style='margin-top:10px;'><strong>{diplome3}</strong> – {ecole3} <span style='color:#666;'>({dates3})</span></p>"
 
-        # 2. Rendu HTML complet intégrant le script de téléchargement PDF
-        st.write("### 👁️ Aperçu & Impression du CV :")
-        
-        cv_html = f"""
-        <div style="text-align: center; margin-bottom: 15px;">
-            <button onclick="window.print()" style="background-color: #22C55E; color: white; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                🖨️ Télécharger mon CV au format PDF / Imprimer
-            </button>
-        </div>
-        
-        <div id="cv-preview" style="background-color: #F3F4F6; padding: 25px; border-radius: 10px; border-left: 8px solid #1E3A8A; font-family: sans-serif; color: #333; margin: 10px;">
-            <h1 style="color: #1E3A8A; margin-bottom: 0; padding-bottom: 0; font-size: 26px;">{nom}</h1>
-            <h3 style="color: #3B82F6; margin-top: 5px; font-weight: normal; font-style: italic; font-size: 16px;">{titre_pro}</h3>
-            
-            <p style="font-size: 13px; background-color: #E5E7EB; padding: 8px; border-radius: 5px; margin-top: 10px;">
-                📍 {ville} | 📞 {telephone} | 📧 {email} | 🔗 {linkedin}
-            </p>
-            
-            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 15px; padding-bottom: 3px; font-size: 14px;">📖 PROFIL</h4>
-            <p style="font-size: 13px; line-height: 1.4; margin: 5px 0;">{accroche}</p>
-            
-            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 15px; padding-bottom: 3px; font-size: 14px;">💼 EXPÉRIENCES PROFESSIONNELLES</h4>
-            <div style="font-size: 13px;">
-                <p style="margin: 5px 0;"><strong>{exp1_poste}</strong> - {exp1_entreprise} <span style="color:#666;">({exp1_dates})</span></p>
-                <p style="font-size: 12px; white-space: pre-line; margin-left: 10px; color: #4B5563;">{exp1_missions}</p>
+        # Code HTML complet du CV conçu pour être imprimable proprement
+        cv_html_page = f"""
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body {{ font-family: sans-serif; color: #333; background-color: #ffffff; padding: 20px; }}
+                .cv-card {{ max-width: 800px; margin: 0 auto; background-color: #F3F4F6; padding: 25px; border-radius: 10px; border-left: 8px solid #1E3A8A; }}
+                h1 {{ color: #1E3A8A; margin-bottom: 0; padding-bottom: 0; font-size: 28px; }}
+                h3 {{ color: #3B82F6; margin-top: 5px; font-weight: normal; font-style: italic; font-size: 18px; }}
+                .contact-bar {{ font-size: 13px; background-color: #E5E7EB; padding: 10px; border-radius: 5px; margin-top: 10px; }}
+                h4 {{ color: #1E3A8A; border-bottom: 2px solid #1E3A8A; margin-top: 20px; padding-bottom: 3px; font-size: 15px; text-transform: uppercase; }}
+                p, div {{ font-size: 13px; line-height: 1.5; }}
+                .mission {{ font-size: 12px; white-space: pre-line; margin-left: 15px; color: #4B5563; }}
+                @media print {{
+                    body {{ padding: 0; background: white; }}
+                    .cv-card {{ border-radius: 0; padding: 0; background: transparent; border-left: 4px solid #1E3A8A; }}
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="cv-card">
+                <h1>{nom}</h1>
+                <h3>{titre_pro}</h3>
                 
-                <p style="margin: 10px 0 5px 0;"><strong>{exp2_poste}</strong> - {exp2_entreprise} <span style="color:#666;">({exp2_dates})</span></p>
-                <p style="font-size: 12px; white-space: pre-line; margin-left: 10px; color: #4B5563;">{exp2_missions}</p>
+                <div class="contact-bar">
+                    📍 {ville} | 📞 {telephone} | 📧 {email} | 🔗 {linkedin}
+                </div>
                 
-                <p style="margin: 10px 0 5px 0;"><strong>{exp3_poste}</strong> - {exp3_entreprise} <span style="color:#666;">({exp3_dates})</span></p>
-                <p style="font-size: 12px; white-space: pre-line; margin-left: 10px; color: #4B5563;">{exp3_missions}</p>
+                <h4>📖 PROFIL</h4>
+                <p>{accroche}</p>
+                
+                <h4>💼 EXPÉRIENCES PROFESSIONNELLES</h4>
+                <div>
+                    <p><strong>{exp1_poste}</strong> - {exp1_entreprise} <span style="color:#666;">({exp1_dates})</span></p>
+                    <p class="mission">{exp1_missions}</p>
+                    
+                    <p style="margin-top: 15px;"><strong>{exp2_poste}</strong> - {exp2_entreprise} <span style="color:#666;">({exp2_dates})</span></p>
+                    <p class="mission">{exp2_missions}</p>
+                    
+                    <p style="margin-top: 15px;"><strong>{exp3_poste}</strong> - {exp3_entreprise} <span style="color:#666;">({exp3_dates})</span></p>
+                    <p class="mission">{exp3_missions}</p>
+                </div>
+                
+                <h4>🎓 FORMATIONS & DIPLÔMES</h4>
+                <div>
+                    {formations_html}
+                </div>
+                
+                <h4>🛠️ COMPÉTENCES & LANGUES</h4>
+                <p><strong>Compétences :</strong> {competences}</p>
+                <p><strong>Langues :</strong> {langues}</p>
+                
+                <h4>⚽ CENTRES D'INTÉRÊT</h4>
+                <p>{interets}</p>
             </div>
-            
-            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 15px; padding-bottom: 3px; font-size: 14px;">🎓 FORMATIONS & DIPLÔMES</h4>
-            <div style="font-size: 13px; margin: 5px 0;">
-                {formations_html}
-            </div>
-            
-            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 15px; padding-bottom: 3px; font-size: 14px;">🛠️ COMPÉTENCES & LANGUES</h4>
-            <p style="font-size: 13px; margin: 5px 0;"><strong>Compétences :</strong> {competences}</p>
-            <p style="font-size: 13px; margin: 5px 0;"><strong>Langues :</strong> {langues}</p>
-            
-            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 15px; padding-bottom: 3px; font-size: 14px;">⚽ CENTRES D'INTÉRÊT</h4>
-            <p style="font-size: 13px; margin: 5px 0;">{interets}</p>
-        </div>
+        </body>
+        </html>
         """
-        components.html(cv_html, height=720, scrolling=True)
+
+        # --- APERÇU SUR LE SITE ---
+        st.write("### 👁️ Aperçu de ton CV :")
+        components.html(cv_html_page, height=600, scrolling=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Bouton complémentaire de téléchargement au format Texte (.txt)
-        st.download_button(
-            label="💾 Télécharger mon CV au format (.txt)",
-            data=cv_txt,
-            file_name=f"CV_{nom.replace(' ', '_')}.txt",
-            mime="text/plain"
-        )
+        # --- BOUTONS DE TÉLÉCHARGEMENT OFFICIELS STREAMLIT ---
+        st.write("### 💾 Liens de téléchargement :")
+        
+        # Colonnes pour mettre les boutons côte à côte proprement
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.download_button(
+                label="📄 Télécharger mon CV au format (.txt)",
+                data=cv_txt,
+                file_name=f"CV_{nom.replace(' ', '_')}.txt",
+                mime="text/plain",
+                use_container_width=True
+            )
+            
+        with col2:
+            # Création du bouton de téléchargement pour le format imprimable / Web (valable comme PDF)
+            st.download_button(
+                label="🌐 Télécharger la version Imprimable (Ouvrir & Enregistrer en PDF)",
+                data=cv_html_page,
+                file_name=f"CV_{nom.replace(' ', '_')}.html",
+                mime="text/html",
+                use_container_width=True
+            )
+            st.info("💡 **Astuce PDF :** Une fois le fichier imprimable téléchargé, ouvre-le dans ton navigateur et fais `Ctrl + P` (ou Imprimer) puis choisis **'Enregistrer au format PDF'**.")
