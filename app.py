@@ -1,14 +1,14 @@
 import streamlit as st
+import streamlit.components.v1 as components
 
 # 1. Configuration de la page du site
 st.set_page_config(page_title="Mon Générateur de CV", page_icon="📄", layout="centered")
 
-# Style CSS pour rendre le site et l'aperçu encore plus beaux avec de la couleur
+# Style CSS pour rendre le site encore plus beau
 st.markdown("""
     <style>
     .main-title { color: #1E3A8A; font-size: 32px; font-weight: bold; text-align: center; margin-bottom: 5px; }
     .subtitle { color: #3B82F6; font-size: 18px; text-align: center; margin-bottom: 25px; }
-    .section-header { color: #1E3A8A; border-bottom: 2px solid #3B82F6; padding-bottom: 5px; margin-top: 20px; margin-bottom: 15px; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -18,14 +18,14 @@ st.markdown("<div class='subtitle'>Remplis tes informations et télécharge ton 
 
 st.write("### 📝 Remplis les différentes sections de ton CV :")
 
-# --- SECTION 1 : INFORMATIONS PERSONNELLES (Avec Kylian Mbappé) ---
+# --- SECTION 1 : INFORMATIONS PERSONNELLES ---
 with st.expander("👤 1. Informations Personnelles & Contact", expanded=True):
     nom = st.text_input("Nom complet (Prénom & Nom)", value="Kylian Mbappé")
     titre_pro = st.text_input("Titre du CV / Métier recherché", value="Footballeur Professionnel / Attaquant International")
     email = st.text_input("Adresse e-mail", value="kylian.mbappe@example.com")
     telephone = st.text_input("Numéro de téléphone", value="06 07 10 29 09")
     ville = st.text_input("Ville & Code Postal", value="Madrid, Espagne (Originaire de Bondy)")
-    linkedin = st.text_input("Lien LinkedIn ou Site Web (Optionnel)", value="instagram.com/k.mbappe")
+    linkedin = st.text_input("Lien LinkedIn ou Site Web", value="instagram.com/k.mbappe")
 
 # --- SECTION 2 : ACCROCHE ---
 with st.expander("📝 2. À propos de moi (Accroche)", expanded=False):
@@ -56,12 +56,24 @@ with st.expander("🏢 3. Expériences Professionnelles (Jusqu'à 3)", expanded=
     exp3_dates = st.text_input("Période (Dates) 3", value="2015 - 2017")
     exp3_missions = st.text_area("Missions 3 (une par ligne)", value="- Formation d'excellence au centre de formation\n- Demi-finaliste de la Ligue des Champions à 18 ans\n- Champion de France de Ligue 1 (2017)")
 
-# --- SECTION 4 : FORMATIONS ---
-with st.expander("🎓 4. Formations & Diplômes", expanded=False):
-    st.write("#### Dernier diplôme ou formation")
-    diplome = st.text_input("Nom du diplôme / Titre de la formation", value="Baccalauréat STMG (Sciences et Technologies du Management et de la Gestion)")
-    ecole = st.text_input("Établissement / École", value="Lycée privé sous contrat avec l'AS Monaco")
-    formation_dates = st.text_input("Période / Année d'obtention", value="2016")
+# --- SECTION 4 : FORMATIONS (CORRIGÉE : MULTIPLES DIPLÔMES) ---
+with st.expander("🎓 4. Formations & Diplômes (Jusqu'à 3)", expanded=False):
+    st.markdown("#### 🎓 Formation 1 (La plus récente)")
+    diplome1 = st.text_input("Nom du diplôme 1", value="Baccalauréat STMG")
+    ecole1 = st.text_input("Établissement / École 1", value="Lycée privé sous contrat avec l'AS Monaco")
+    dates1 = st.text_input("Année d'obtention 1", value="2016")
+    
+    st.markdown("---")
+    st.markdown("#### 🎓 Formation 2")
+    diplome2 = st.text_input("Nom du diplôme 2 (Optionnel)", value="Formation Management Sportif & Leadership")
+    ecole2 = st.text_input("Établissement / École 2", value=" thereal-academy en ligne")
+    dates2 = st.text_input("Année d'obtention 2", value="2020")
+
+    st.markdown("---")
+    st.markdown("#### 🎓 Formation 3")
+    diplome3 = st.text_input("Nom du diplôme 3 (Optionnel)", value="")
+    ecole3 = st.text_input("Établissement / École 3", value="")
+    dates3 = st.text_input("Année d'obtention 3", value="")
 
 # --- SECTION 5 : COMPÉTENCES & LANGUES ---
 with st.expander("🛠️ 5. Compétences, Langues & Intérêts", expanded=False):
@@ -76,7 +88,14 @@ if st.button("✨ Générer et Prévisualiser mon CV"):
     if not nom or not titre_pro or not email:
         st.error("❌ Les champs 'Nom complet', 'Titre du CV' et 'Adresse e-mail' sont obligatoires.")
     else:
-        st.success("🎉 Ton CV a été généré avec succès ! Découvre l'aperçu stylisé ci-dessous.")
+        st.success("🎉 Ton CV a été généré avec succès ! Découvre l'aperçu mis en forme ci-dessous.")
+
+        # Construction de la section Formations en texte
+        formations_txt = f"• {dates1} | {diplome1}\n  🏢 {ecole1}"
+        if diplome2:
+            formations_txt += f"\n\n• {dates2} | {diplome2}\n  🏢 {ecole2}"
+        if diplome3:
+            formations_txt += f"\n\n• {dates3} | {diplome3}\n  🏢 {ecole3}"
 
         # 1. Version Texte pour le téléchargement (.txt)
         cv_txt = f"""========================================================================
@@ -109,10 +128,9 @@ if st.button("✨ Générer et Prévisualiser mon CV"):
   {exp3_entreprise}
   {exp3_missions}
 
-🎓 FORMATION
+🎓 FORMATIONS
 ------------------------------------------------------------------------
-• {formation_dates} | {diplome}
-  🏢 {ecole}
+{formations_txt}
 
 🛠️ COMPÉTENCES
 ------------------------------------------------------------------------
@@ -130,43 +148,55 @@ if st.button("✨ Générer et Prévisualiser mon CV"):
 Généré automatiquement via l'application CV Python de {nom}
 """
 
-        # 2. Affichage d'un aperçu coloré et mis en page en HTML directement sur le site
+        # Construction de la section Formations en HTML
+        formations_html = f"<p><strong>{diplome1}</strong> – {ecole1} <span style='color:#666;'>({dates1})</span></p>"
+        if diplome2:
+            formations_html += f"<p style='margin-top:10px;'><strong>{diplome2}</strong> – {ecole2} <span style='color:#666;'>({dates2})</span></p>"
+        if diplome3:
+            formations_html += f"<p style='margin-top:10px;'><strong>{diplome3}</strong> – {ecole3} <span style='color:#666;'>({dates3})</span></p>"
+
+        # 2. Rendu HTML sécurisé via iframe composant Streamlit
         st.write("### 👁️ Aperçu de ton nouveau CV :")
         
         cv_html = f"""
-        <div style="background-color: #F3F4F6; padding: 25px; border-radius: 10px; border-left: 8px solid #1E3A8A; font-family: sans-serif; color: #333;">
-            <h1 style="color: #1E3A8A; margin-bottom: 0; padding-bottom: 0;">{nom}</h1>
-            <h3 style="color: #3B82F6; margin-top: 5px; font-weight: normal; font-style: italic;">{titre_pro}</h3>
+        <div style="background-color: #F3F4F6; padding: 20px; border-radius: 10px; border-left: 8px solid #1E3A8A; font-family: sans-serif; color: #333; margin: 10px;">
+            <h1 style="color: #1E3A8A; margin-bottom: 0; padding-bottom: 0; font-size: 26px;">{nom}</h1>
+            <h3 style="color: #3B82F6; margin-top: 5px; font-weight: normal; font-style: italic; font-size: 16px;">{titre_pro}</h3>
             
-            <p style="font-size: 14px; background-color: #E5E7EB; padding: 10px; border-radius: 5px;">
+            <p style="font-size: 13px; background-color: #E5E7EB; padding: 8px; border-radius: 5px; margin-top: 10px;">
                 📍 {ville} | 📞 {telephone} | 📧 {email} | 🔗 {linkedin}
             </p>
             
-            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 20px; padding-bottom: 3px;">📖 PROFIL</h4>
-            <p style="font-size: 15px; line-height: 1.5;">{accroche}</p>
+            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 15px; padding-bottom: 3px; font-size: 14px;">📖 PROFIL</h4>
+            <p style="font-size: 13px; line-height: 1.4; margin: 5px 0;">{accroche}</p>
             
-            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 20px; padding-bottom: 3px;">💼 EXPÉRIENCES PROFESSIONNELLES</h4>
-            <p><strong>{exp1_poste}</strong> - {exp1_entreprise} <span style="color:#666;">({exp1_dates})</span></p>
-            <p style="font-size: 14px; white-space: pre-line; margin-left: 15px;">{exp1_missions}</p>
+            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 15px; padding-bottom: 3px; font-size: 14px;">💼 EXPÉRIENCES PROFESSIONNELLES</h4>
+            <div style="font-size: 13px;">
+                <p style="margin: 5px 0;"><strong>{exp1_poste}</strong> - {exp1_entreprise} <span style="color:#666;">({exp1_dates})</span></p>
+                <p style="font-size: 12px; white-space: pre-line; margin-left: 10px; color: #4B5563;">{exp1_missions}</p>
+                
+                <p style="margin: 10px 0 5px 0;"><strong>{exp2_poste}</strong> - {exp2_entreprise} <span style="color:#666;">({exp2_dates})</span></p>
+                <p style="font-size: 12px; white-space: pre-line; margin-left: 10px; color: #4B5563;">{exp2_missions}</p>
+                
+                <p style="margin: 10px 0 5px 0;"><strong>{exp3_poste}</strong> - {exp3_entreprise} <span style="color:#666;">({exp3_dates})</span></p>
+                <p style="font-size: 12px; white-space: pre-line; margin-left: 10px; color: #4B5563;">{exp3_missions}</p>
+            </div>
             
-            <p style="margin-top: 15px;"><strong>{exp2_poste}</strong> - {exp2_entreprise} <span style="color:#666;">({exp2_dates})</span></p>
-            <p style="font-size: 14px; white-space: pre-line; margin-left: 15px;">{exp2_missions}</p>
+            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 15px; padding-bottom: 3px; font-size: 14px;">🎓 FORMATIONS & DIPLÔMES</h4>
+            <div style="font-size: 13px; margin: 5px 0;">
+                {formations_html}
+            </div>
             
-            <p style="margin-top: 15px;"><strong>{exp3_poste}</strong> - {exp3_entreprise} <span style="color:#666;">({exp3_dates})</span></p>
-            <p style="font-size: 14px; white-space: pre-line; margin-left: 15px;">{exp3_missions}</p>
+            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 15px; padding-bottom: 3px; font-size: 14px;">🛠️ COMPÉTENCES & LANGUES</h4>
+            <p style="font-size: 13px; margin: 5px 0;"><strong>Compétences :</strong> {competences}</p>
+            <p style="font-size: 13px; margin: 5px 0;"><strong>Langues :</strong> {langues}</p>
             
-            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 20px; padding-bottom: 3px;">🎓 FORMATION</h4>
-            <p><strong>{diplome}</strong> – {ecole} <span style="color:#666;">({formation_dates})</span></p>
-            
-            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 20px; padding-bottom: 3px;">🛠️ COMPÉTENCES & LANGUES</h4>
-            <p style="font-size: 15px;"><strong>Compétences :</strong> {competences}</p>
-            <p style="font-size: 15px;"><strong>Langues :</strong> {langues}</p>
-            
-            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 20px; padding-bottom: 3px;">⚽ CENTRES D'INTÉRÊT</h4>
-            <p style="font-size: 15px;">{interets}</p>
+            <h4 style="color: #1E3A8A; border-bottom: 1px solid #1E3A8A; margin-top: 15px; padding-bottom: 3px; font-size: 14px;">⚽ CENTRES D'INTÉRÊT</h4>
+            <p style="font-size: 13px; margin: 5px 0;">{interets}</p>
         </div>
         """
-        st.markdown(cv_html, unsafe_allow_html=True)
+        # Utilisation de components.html pour forcer le bon affichage du design graphique
+        components.html(cv_html, height=650, scrolling=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
         # Bouton pour télécharger le fichier texte propre
