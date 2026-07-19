@@ -1,7 +1,7 @@
 import streamlit as st
 
 # 1. Configuration de la page du site
-st.set_page_config(page_title="Générateur de CV Professionnel", page_icon="💼", layout="centered")
+st.set_page_config(page_title="Mon Générateur de CV", page_icon="📄", layout="centered")
 
 # Style CSS pour rendre le site et l'aperçu encore plus beaux avec de la couleur
 st.markdown("""
@@ -12,12 +12,13 @@ st.markdown("""
     </style>
 """, unsafe_input_html=True)
 
-st.markdown('<div class="main-title">💼 Créateur de CV Professionnel en Ligne</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Génère un CV complet, coloré et prêt à l'emploi !</div>', unsafe_allow_html=True)
+# Titre principal mis à jour
+st.markdown('<div class="main-title">✨ Mon Générateur de CV</div>', unsafe_allow_html=True)
+st.markdown("<div class='subtitle'>Remplis tes informations et télécharge ton CV complet en un clic !</div>", unsafe_allow_html=True)
 
 st.write("### 📝 Remplis les différentes sections de ton CV :")
 
-# --- SECTION 1 : INFORMATIONS PERSONNELLES ---
+# --- SECTION 1 : INFORMATIONS PERSONNELLES (Avec Kylian Mbappé) ---
 with st.expander("👤 1. Informations Personnelles & Contact", expanded=True):
     nom = st.text_input("Nom complet (Prénom & Nom)", value="Kylian Mbappé")
     titre_pro = st.text_input("Titre du CV / Métier recherché", value="Footballeur Professionnel / Attaquant International")
