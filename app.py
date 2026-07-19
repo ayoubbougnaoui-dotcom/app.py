@@ -4,7 +4,7 @@ import streamlit.components.v1 as components
 # 1. Configuration de la page du site
 st.set_page_config(page_title="Mon Générateur de CV", page_icon="📄", layout="centered")
 
-# Style CSS pour rendre le site encore plus beau
+# Style CSS pour le design global du site
 st.markdown("""
     <style>
     .main-title { color: #1E3A8A; font-size: 32px; font-weight: bold; text-align: center; margin-bottom: 5px; }
@@ -17,7 +17,7 @@ st.markdown("<div class='subtitle'>Remplis tes informations et télécharge ton 
 
 st.write("### 📝 Remplis les différentes sections de ton CV :")
 
-# --- SECTION 1 : INFORMATIONS PERSONNELLES (Mise à jour avec Bondy 93140) ---
+# --- SECTION 1 : INFORMATIONS PERSONNELLES ---
 with st.expander("👤 1. Informations Personnelles & Contact", expanded=True):
     nom = st.text_input("Nom complet (Prénom & Nom)", value="Kylian Mbappé")
     titre_pro = st.text_input("Titre du CV / Métier recherché", value="Footballeur Professionnel / Attaquant International")
@@ -33,7 +33,6 @@ with st.expander("📝 2. À propos de moi (Génération Profil)", expanded=Fals
         value="Rapide, Déterminé, Sens du collectif, Leadership"
     )
     
-    # Création de la phrase automatique à partir des mots-clés
     if mots_cles:
         accroche = f"Professionnel {titre_pro.lower()} caractérisé par mon profil : {mots_cles.strip()}. Passionné par l'excellence et le travail bien fait, je mets mes compétences et mon esprit d'équipe au service d'objectifs ambitieux."
     else:
@@ -61,7 +60,7 @@ with st.expander("🏢 3. Expériences Professionnelles (Jusqu'à 3)", expanded=
     exp3_dates = st.text_input("Période (Dates) 3", value="2015 - 2017")
     exp3_missions = st.text_area("Missions 3 (une par ligne)", value="- Formation d'excellence au centre de formation\n- Demi-finaliste de la Ligue des Champions à 18 ans\n- Champion de France de Ligue 1 (2017)")
 
-# --- SECTION 4 : FORMATIONS (MULTIPLES DIPLÔMES) ---
+# --- SECTION 4 : FORMATIONS ---
 with st.expander("🎓 4. Formations & Diplômes (Jusqu'à 3)", expanded=False):
     st.markdown("#### 🎓 Formation 1 (La plus récente)")
     diplome1 = st.text_input("Nom du diplôme 1", value="Baccalauréat STMG")
@@ -95,14 +94,14 @@ if st.button("✨ Générer et Prévisualiser mon CV"):
     else:
         st.success("🎉 Ton CV a été généré avec succès ! Découvre l'aperçu mis en forme ci-dessous.")
 
-        # Construction de la section Formations en texte
+        # Construction de la section Formations en texte (.txt)
         formations_txt = f"• {dates1} | {diplome1}\n  🏢 {ecole1}"
         if diplome2:
             formations_txt += f"\n\n• {dates2} | {diplome2}\n  🏢 {ecole2}"
         if diplome3:
             formations_txt += f"\n\n• {dates3} | {diplome3}\n  🏢 {ecole3}"
 
-        # 1. Version Texte pour le téléchargement (.txt)
+        # 1. Version Texte
         cv_txt = f"""========================================================================
 {nom.upper()}
 {titre_pro.upper()}
@@ -160,11 +159,17 @@ Généré automatiquement via l'application CV Python de {nom}
         if diplome3:
             formations_html += f"<p style='margin-top:10px;'><strong>{diplome3}</strong> – {ecole3} <span style='color:#666;'>({dates3})</span></p>"
 
-        # 2. Rendu HTML sécurisé
-        st.write("### 👁️ Aperçu de ton nouveau CV :")
+        # 2. Rendu HTML complet intégrant le script de téléchargement PDF
+        st.write("### 👁️ Aperçu & Impression du CV :")
         
         cv_html = f"""
-        <div style="background-color: #F3F4F6; padding: 20px; border-radius: 10px; border-left: 8px solid #1E3A8A; font-family: sans-serif; color: #333; margin: 10px;">
+        <div style="text-align: center; margin-bottom: 15px;">
+            <button onclick="window.print()" style="background-color: #22C55E; color: white; border: none; padding: 10px 20px; font-size: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                🖨️ Télécharger mon CV au format PDF / Imprimer
+            </button>
+        </div>
+        
+        <div id="cv-preview" style="background-color: #F3F4F6; padding: 25px; border-radius: 10px; border-left: 8px solid #1E3A8A; font-family: sans-serif; color: #333; margin: 10px;">
             <h1 style="color: #1E3A8A; margin-bottom: 0; padding-bottom: 0; font-size: 26px;">{nom}</h1>
             <h3 style="color: #3B82F6; margin-top: 5px; font-weight: normal; font-style: italic; font-size: 16px;">{titre_pro}</h3>
             
@@ -200,10 +205,10 @@ Généré automatiquement via l'application CV Python de {nom}
             <p style="font-size: 13px; margin: 5px 0;">{interets}</p>
         </div>
         """
-        components.html(cv_html, height=650, scrolling=True)
+        components.html(cv_html, height=720, scrolling=True)
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Bouton de téléchargement
+        # Bouton complémentaire de téléchargement au format Texte (.txt)
         st.download_button(
             label="💾 Télécharger mon CV au format (.txt)",
             data=cv_txt,
