@@ -37,22 +37,21 @@ else:
 st.write("---")
 st.write("### 📝 Remplis tes informations :")
 
-# --- SECTION 1 : CONTACT ---
+# --- SECTION 1 : CONTACT (Remplacement par LinkedIn) ---
 with st.expander("👤 1. Informations Personnelles & Contact", expanded=True):
     nom = st.text_input("Nom complet", value="Kylian Mbappé")
     titre_pro = st.text_input("Métier recherché / Titre du CV", value="Footballeur Professionnel / Attaquant International")
     email = st.text_input("Adresse e-mail", value="kylian.mbappe@example.com")
     telephone = st.text_input("Numéro de téléphone", value="06 07 10 29 09")
     ville = st.text_input("Ville & Code Postal", value="Bondy 93140")
-    linkedin = st.text_input("Lien LinkedIn / Réseaux (Optionnel)", value="instagram.com/k.mbappe")
+    linkedin = st.text_input("Lien LinkedIn (Optionnel)", value="linkedin.com/in/k.mbappe")
 
-# --- SECTION 2 : ACCROCHE GÉNÉRÉE SANS FAUTE ---
+# --- SECTION 2 : ACCROCHE GÉNÉRÉE ---
 with st.expander("📝 2. À propos de moi (Mots-clés)", expanded=False):
     mots_cles = st.text_input(
         "Entre tes points forts séparés par des virgules :",
         value="Rapide, Déterminé, Sens du collectif, Leadership"
     )
-    # Correction de la structure de la phrase automatique
     if mots_cles:
         accroche = f"Profil dynamique orienté vers l'excellence, se distinguant par les qualités suivantes : {mots_cles.strip()}. Passionné par mon métier, je mets mes compétences et mon esprit d'équipe au service d'objectifs ambitieux."
     else:
