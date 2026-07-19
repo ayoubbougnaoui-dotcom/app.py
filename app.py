@@ -4,7 +4,6 @@ import streamlit.components.v1 as components
 # 1. Configuration de la page
 st.set_page_config(page_title="Générateur de CV Pro", page_icon="📄", layout="centered")
 
-# --- BARRE DE PROGRESSION (Calcul du remplissage) ---
 st.markdown("""
     <style>
     .main-title { color: #1E3A8A; font-size: 32px; font-weight: bold; text-align: center; margin-bottom: 5px; }
@@ -22,7 +21,6 @@ theme = st.selectbox(
     ["Bleu Moderne 🔵", "Vert Émeraude 🟢", "Gris Minimaliste ⚫"]
 )
 
-# Définition des couleurs selon le thème choisi
 if "Bleu" in theme:
     color_primary = "#1E3A8A"
     color_secondary = "#3B82F6"
@@ -48,16 +46,17 @@ with st.expander("👤 1. Informations Personnelles & Contact", expanded=True):
     ville = st.text_input("Ville & Code Postal", value="Bondy 93140")
     linkedin = st.text_input("Lien LinkedIn / Réseaux (Optionnel)", value="instagram.com/k.mbappe")
 
-# --- SECTION 2 : ACCROCHE GÉNÉRÉE ---
+# --- SECTION 2 : ACCROCHE GÉNÉRÉE SANS FAUTE ---
 with st.expander("📝 2. À propos de moi (Mots-clés)", expanded=False):
     mots_cles = st.text_input(
         "Entre tes points forts séparés par des virgules :",
         value="Rapide, Déterminé, Sens du collectif, Leadership"
     )
+    # Correction de la structure de la phrase automatique
     if mots_cles:
-        accroche = f"Professionnel {titre_pro.lower()} caractérisé par mon profil : {mots_cles.strip()}. Passionné par l'excellence et le travail bien fait, je mets mes compétences et mon esprit d'équipe au service d'objectifs ambitieux."
+        accroche = f"Profil dynamique orienté vers l'excellence, se distinguant par les qualités suivantes : {mots_cles.strip()}. Passionné par mon métier, je mets mes compétences et mon esprit d'équipe au service d'objectifs ambitieux."
     else:
-        accroche = "Profil professionnel motivé et rigoureux."
+        accroche = "Profil professionnel motivé, sérieux et rigoureux."
 
 # --- SECTION 3 : EXPÉRIENCES ---
 with st.expander("🏢 3. Expériences Professionnelles (Jusqu'à 3)", expanded=False):
@@ -122,7 +121,7 @@ if st.button("✨ Générer mon CV Personnalisé"):
         if diplome3:
             formations_html += f"<p style='margin-top:8px;'><strong>{diplome3}</strong> – {ecole3} <span style='color:#666;'>({dates3})</span></p>"
 
-        # Code HTML ultra-pro thématisé
+        # Code HTML propre
         cv_html_page = f"""
         <html>
         <head>
@@ -183,7 +182,7 @@ if st.button("✨ Générer mon CV Personnalisé"):
         st.write("### 👁️ Ton CV Stylisé :")
         components.html(cv_html_page, height=750, scrolling=True)
 
-        # Bouton de téléchargement de la page imprimable
+        # Bouton de téléchargement
         st.write("### 💾 Enregistre ton document :")
         st.download_button(
             label="📥 Télécharger la version Imprimable (Ouvrir puis Ctrl+P pour sauvegarder en PDF)",
@@ -192,4 +191,3 @@ if st.button("✨ Générer mon CV Personnalisé"):
             mime="text/html",
             use_container_width=True
         )
-        st.info("💡 **Pour avoir le PDF parfait :** Ouvre le fichier `.html` téléchargé, fais `Ctrl + P` (ou clic droit -> Imprimer) sur ton ordinateur, et sélectionne **'Enregistrer au format PDF'**.")
